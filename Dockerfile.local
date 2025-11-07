@@ -1,0 +1,40 @@
+# ---- Dependencies ----
+FROM node:20-alpine AS build
+WORKDIR /app
+
+# Copy package files
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN yarn install
+
+# Copy source code and env file
+COPY . .
+
+# Override backend URL for local deployment
+RUN echo "VUE_APP_PROJECT = \"https://github.com/CareyWang/sub-web\"" > .env && \
+    echo "VUE_APP_BOT_LINK = \"https://t.me/subconverter_discuss\"" >> .env && \
+    echo "VUE_APP_BACKEND_RELEASE = \"https://github.com/tindy2013/subconverter/actions\"" >> .env && \
+    echo "VUE_APP_SUBCONVERTER_REMOTE_CONFIG = \"https://raw.githubusercontent.com/tindy2013/subconverter/master/base/config/example_external_config.ini\"" >> .env && \
+    echo "VUE_APP_SUBCONVERTER_DOC_ADVANCED = \"https://github.com/tindy2013/subconverter/blob/master/README-cn.md#%E8%BF%9B%E9%98%B6%E9%93%BE%E6%8E%A5\"" >> .env && \
+    echo "VUE_APP_SUBCONVERTER_DEFAULT_BACKEND = \"http://localhost:25500\"" >> .env && \
+    echo "VUE_APP_MYURLS_API = \"https://suosuo.de/short\"" >> .env && \
+    echo "VUE_APP_CONFIG_UPLOAD_API = \"https://oss.wcc.best/upload\"" >> .env && \
+    echo "VUE_APP_USE_STORAGE = true" >> .env && \
+    echo "VUE_APP_CACHE_TTL = 86400" >> .env
+
+# Build the app
+RUN yarn build
+
+# ---- Production ----
+FROM nginx:1.24-alpine
+
+# Copy built files
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom nginx config if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD [ "nginx", "-g", "daemon off;" ]
