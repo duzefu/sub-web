@@ -463,7 +463,6 @@ const project = process.env.VUE_APP_PROJECT
 const remoteConfigSample = process.env.VUE_APP_SUBCONVERTER_REMOTE_CONFIG
 const subDocAdvanced = process.env.VUE_APP_SUBCONVERTER_DOC_ADVANCED
 const gayhubRelease = process.env.VUE_APP_BACKEND_RELEASE
-const defaultBackend = process.env.VUE_APP_SUBCONVERTER_DEFAULT_BACKEND + '/sub?'
 const shortUrlBackend = process.env.VUE_APP_MYURLS_API
 const configUploadBackend = process.env.VUE_APP_CONFIG_UPLOAD_API
 const tgBotLink = process.env.VUE_APP_BOT_LINK
@@ -476,6 +475,9 @@ export default {
 
       // 是否为 PC 端
       isPC: true,
+
+      // 动态后端地址
+      dynamicBackend: "",
 
       options: {
         clientTypes: {
@@ -491,13 +493,42 @@ export default {
           ssd: "ssd",
           sssub: "sssub",
           ssr: "ssr",
-          ClashR: "clashr",          
+          ClashR: "clashr",
           V2Ray: "v2ray",
           Trojan: "trojan",
           Surge3: "surge&ver=3",
         },
-        backendOptions: [{ value: "http://66.103.199.120:25500/sub?" }],
+        backendOptions: [],
         remoteConfig: [
+          {
+            label: "Local Config（本地配置）",
+            options: [
+              {
+                label: "ACL4SSR_Online 默认版 分组比较全",
+                value: "config/ACL4SSR_Online.ini"
+              },
+              {
+                label: "ACL4SSR_Online_Full 全分组 重度用户使用",
+                value: "config/ACL4SSR_Online_Full.ini"
+              },
+              {
+                label: "ACL4SSR_Online_Mini 精简版",
+                value: "config/ACL4SSR_Online_Mini.ini"
+              },
+              {
+                label: "ACL4SSR_Online_NoAuto 无自动测速",
+                value: "config/ACL4SSR_Online_NoAuto.ini"
+              },
+              {
+                label: "ACL4SSR_Online_AdblockPlus 更多去广告",
+                value: "config/ACL4SSR_Online_AdblockPlus.ini"
+              },
+              {
+                label: "ACL4SSR_Online_MultiCountry 多国分组",
+                value: "config/ACL4SSR_Online_MultiCountry.ini"
+              }
+            ]
+          },
           {
             label: "universal",
             options: [
@@ -635,7 +666,21 @@ export default {
     }
   },
   mounted() {
+    // 动态获取后端地址
+    const protocol = window.location.protocol; // http: or https:
+    const hostname = window.location.hostname; // IP or domain without port
+    this.dynamicBackend = `${protocol}//${hostname}:25500/sub?`;
+
+    // 设置后端选项
+    this.options.backendOptions = [
+      { value: this.dynamicBackend }
+    ];
+
+    // 设置默认值
     this.form.clientType = "clash";
+    this.form.customBackend = this.dynamicBackend;
+    this.form.remoteConfig = "config/ACL4SSR_Online.ini";
+
     this.notify();
     this.getBackendVersion();
   },
@@ -691,7 +736,7 @@ export default {
 
       let backend =
         this.form.customBackend === ""
-          ? defaultBackend
+          ? this.dynamicBackend
           : this.form.customBackend;
 
       let sourceSub = this.form.sourceSubUrl;
@@ -979,13 +1024,16 @@ export default {
       };
     },
     getBackendVersion() {
+      // 使用动态后端地址获取版本信息
+      const versionUrl = this.dynamicBackend.substring(0, this.dynamicBackend.length - 5) + "/version";
       this.$axios
-        .get(
-          defaultBackend.substring(0, defaultBackend.length - 5) + "/version"
-        )
+        .get(versionUrl)
         .then(res => {
           this.backendVersion = res.data.replace(/backend\n$/gm, "");
           this.backendVersion = this.backendVersion.replace("subconverter", "");
+        })
+        .catch(() => {
+          this.backendVersion = "Backend unavailable";
         });
     },
     saveSubUrl() {
