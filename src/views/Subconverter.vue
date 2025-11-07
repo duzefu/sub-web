@@ -194,6 +194,270 @@
   </div>
 </template>
 
+<style lang="scss" scoped>
+// 主容器样式优化
+.el-row {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// 卡片美化 - 玻璃态效果
+.el-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+  }
+
+  ::v-deep .el-card__header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px 20px 0 0;
+    padding: 25px;
+    font-size: 24px;
+    font-weight: 600;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .svg-icon {
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      font-size: 28px;
+
+      &:hover {
+        transform: scale(1.2) rotate(10deg);
+      }
+    }
+  }
+
+  ::v-deep .el-card__body {
+    padding: 30px;
+  }
+}
+
+// 表单样式优化
+.el-form {
+  ::v-deep .el-form-item__label {
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  ::v-deep .el-input__inner,
+  ::v-deep .el-textarea__inner {
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+  }
+
+  ::v-deep .el-select {
+    width: 100%;
+
+    .el-input__inner {
+      border-radius: 10px;
+    }
+  }
+
+  // 单选按钮美化
+  ::v-deep .el-radio {
+    margin-right: 30px;
+
+    .el-radio__label {
+      font-weight: 500;
+    }
+  }
+
+  // Checkbox 美化
+  ::v-deep .el-checkbox {
+    margin-bottom: 10px;
+
+    .el-checkbox__label {
+      font-weight: 500;
+    }
+  }
+}
+
+// 按钮美化
+::v-deep .el-button {
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.el-button--danger {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+
+    &:hover {
+      background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+    }
+  }
+
+  &.el-button--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    &:hover {
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+  }
+}
+
+// 输入框组按钮
+::v-deep .el-input-group__append {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 0 10px 10px 0;
+
+  .el-button {
+    background: transparent;
+    color: white;
+    border: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      opacity: 0.9;
+    }
+  }
+}
+
+// 分割线美化
+::v-deep .el-divider {
+  background: linear-gradient(90deg, transparent, #cbd5e0, transparent);
+
+  .el-divider__text {
+    background: transparent;
+    color: #667eea;
+    font-size: 20px;
+  }
+}
+
+// Popover 美化
+::v-deep .el-popover {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+// 对话框美化
+::v-deep .el-dialog {
+  border-radius: 20px;
+  overflow: hidden;
+
+  .el-dialog__header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+
+    .el-dialog__title {
+      color: white;
+      font-weight: 600;
+      font-size: 20px;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 30px;
+  }
+
+  .el-dialog__footer {
+    padding: 20px 30px;
+    background: #f7fafc;
+  }
+}
+
+// 复制按钮组样式
+.copy-content {
+  ::v-deep .el-input__inner {
+    background: #f7fafc;
+    border-color: #e2e8f0;
+    color: #2d3748;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+  }
+}
+
+// 自定义参数输入框
+::v-deep .el-input__suffix {
+  display: flex;
+  align-items: center;
+}
+
+// 响应式优化
+@media (max-width: 768px) {
+  .el-card {
+    border-radius: 15px;
+
+    ::v-deep .el-card__header {
+      padding: 20px;
+      font-size: 20px;
+      border-radius: 15px 15px 0 0;
+    }
+
+    ::v-deep .el-card__body {
+      padding: 20px;
+    }
+  }
+
+  .el-form {
+    ::v-deep .el-form-item__label {
+      text-align: left !important;
+      float: none;
+      width: 100% !important;
+      padding-bottom: 10px;
+    }
+
+    ::v-deep .el-form-item__content {
+      margin-left: 0 !important;
+    }
+  }
+
+  ::v-deep .el-button {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+
+  ::v-deep .el-radio {
+    display: block;
+    margin-bottom: 10px;
+  }
+}
+
+// 添加进入动画
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.el-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+</style>
+
 <script>
 const project = process.env.VUE_APP_PROJECT
 const remoteConfigSample = process.env.VUE_APP_SUBCONVERTER_REMOTE_CONFIG
